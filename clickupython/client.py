@@ -539,6 +539,10 @@ class ClickUpClient:
             supplied_values.append(
                 f"{urllib.parse.quote_plus('assignees[]')}={','.join(assignees)}"
             )
+        if tags:
+            supplied_values.append(
+                f"{urllib.parse.quote_plus('tags[]')}={','.join(tags)}"
+            )
         if due_date_gt:
             supplied_values.append(f"due_date_gt={fuzzy_time_to_unix(due_date_gt)}")
         if due_date_lt:
