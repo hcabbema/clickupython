@@ -76,7 +76,6 @@ class ClickUpClient:
     def __get_request(self, model, *additionalpath) -> json:
         """Performs a Get request to the ClickUp API"""
         path = formatting.url_join(API_URL, model, *additionalpath)
-
         self.__check_rate_limit()
 
         response = requests.get(path, headers=self.__headers())
@@ -532,33 +531,39 @@ class ClickUpClient:
         ]
 
         if statuses:
-            supplied_values.append(
-                f"{urllib.parse.quote_plus('statuses[]')}={','.join(statuses)}"
-            )
+            for status in statuses:
+                supplied_values.append(
+                    f"{urllib.parse.quote_plus('statuses[]')}={status}"
+                )
         if assignees:
-            supplied_values.append(
-                f"{urllib.parse.quote_plus('assignees[]')}={','.join(assignees)}"
-            )
+            for assignee in assignees:
+                supplied_values.append(
+                    f"{urllib.parse.quote_plus('assignees[]')}={assignee}"
+                )
         if tags:
-            supplied_values.append(
-                f"{urllib.parse.quote_plus('tags[]')}={','.join(tags)}"
-            )
+            for tag in tags:
+                supplied_values.append(
+                    f"{urllib.parse.quote_plus('tags[]')}={tag}"
+                )
         if due_date_gt:
             supplied_values.append(f"due_date_gt={fuzzy_time_to_unix(due_date_gt)}")
         if due_date_lt:
             supplied_values.append(f"due_date_lt={fuzzy_time_to_unix(due_date_lt)}")
         if space_ids:
-            supplied_values.append(
-                f"{urllib.parse.quote_plus('space_ids[]')}={','.join(space_ids)}"
-            )
+            for space_id in space_ids:
+                supplied_values.append(
+                    f"{urllib.parse.quote_plus('space_ids[]')}={space_id}"
+                )
         if project_ids:
-            supplied_values.append(
-                f"{urllib.parse.quote_plus('project_ids[]')}={','.join(project_ids)}"
-            )
+            for project_id in project_ids:
+                supplied_values.append(
+                    f"{urllib.parse.quote_plus('project_ids[]')}={project_id}"
+                )
         if list_ids:
-            supplied_values.append(
-                f"{urllib.parse.quote_plus('list_ids[]')}={','.join(list_ids)}"
-            )
+            for list_id in list_ids:
+                supplied_values.append(
+                    f"{urllib.parse.quote_plus('list_ids[]')}={list_id}"
+                )
         if date_created_gt:
             supplied_values.append(f"date_created_gt={date_created_gt}")
         if date_created_lt:
@@ -588,6 +593,7 @@ class ClickUpClient:
         statuses: List[str] = None,
         include_closed: bool = False,
         assignees: List[str] = None,
+        tags: List[str] = None,
         due_date_gt: str = None,
         due_date_lt: str = None,
         date_created_gt: str = None,
@@ -618,6 +624,8 @@ class ClickUpClient:
                 Include closed tasks in the query. Defaults to False.
             :assignees (List[str], optional):
                 Retrieve tasks for specific assignees only. Defaults to None.
+            :tags (List[str], optional):
+                Retrieve tasks for specific tags only. Default to None.
             :due_date_gt (str, optional):
                 Retrieve tasks with a due date greater than the supplied date. Defaults to None.
             :due_date_lt (str, optional): Retrieve tasks with a due date less than the supplied date. Defaults to None.
@@ -650,13 +658,20 @@ class ClickUpClient:
         ]
 
         if statuses:
-            supplied_values.append(
-                f"{urllib.parse.quote_plus('statuses[]')}={','.join(statuses)}"
-            )
+            for status in statuses:
+                supplied_values.append(
+                    f"{urllib.parse.quote_plus('statuses[]')}={status}"
+                )
         if assignees:
-            supplied_values.append(
-                f"{urllib.parse.quote_plus('assignees[]')}={','.join(assignees)}"
-            )
+            for assignee in assignees:
+                supplied_values.append(
+                    f"{urllib.parse.quote_plus('assignees[]')}={assignee}"
+                )
+        if tags:
+            for tag in tags:
+                supplied_values.append(
+                    f"{urllib.parse.quote_plus('tags[]')}={tag}"
+                )
         if due_date_gt:
             supplied_values.append(f"due_date_gt={fuzzy_time_to_unix(due_date_gt)}")
         if due_date_lt:
@@ -1545,3 +1560,9 @@ class ClickUpClient:
 
         if fetched_time_data:
             return models.TimeTrackingDataSingle.build_data(fetched_time_data)
+
+#%%
+c = ClickUpClient("pk_54778516_VHPWB4227XHVKA43P9ZYMH2XW9H1PN40")
+
+#%%
+tests = c.get_team_tasks(team_Id="36883063", tags=['electronics', 'gitlab' ], date_created_gt=1681829641497, statuses=['todo', 'in progress', 'on hold']).tasks
