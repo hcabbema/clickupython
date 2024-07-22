@@ -1560,9 +1560,3 @@ class ClickUpClient:
 
         if fetched_time_data:
             return models.TimeTrackingDataSingle.build_data(fetched_time_data)
-
-#%%
-c = ClickUpClient("pk_54778516_VHPWB4227XHVKA43P9ZYMH2XW9H1PN40")
-
-#%%
-tests = c.get_team_tasks(team_Id="36883063", tags=['electronics', 'gitlab' ], date_created_gt=1681829641497, statuses=['todo', 'in progress', 'on hold']).tasks
